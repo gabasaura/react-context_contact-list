@@ -17,7 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
             createContact: async (contact) => {
                 try {
-                    await fetch('https://playground.4geeks.com/contact/agendas/gaba', {
+                    await fetch('https://playground.4geeks.com/contact/agendas/gaba/contacts', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

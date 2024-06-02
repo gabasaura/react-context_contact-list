@@ -3,7 +3,11 @@
   width: 100px;
 }
 .btn-icon-nav:hover{
-  color: #0dcaf0 ;
+  color: #0dcaf0;
+}
+
+.icon-card:hover{
+  color: #0dcaf0;
 }
 
 .icon-navbar{

@@ -1,22 +1,39 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../store/AppContext';
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ContactCard from '../components/Card';
 
 const Home = () => {
     const { store, actions } = useContext(AppContext);
-    const navigate = useNavigate();
+    const [editContactId, setEditContactId] = useState(null);
+    const [updatedContact, setUpdatedContact] = useState({});
 
     useEffect(() => {
         actions.fetchContacts();  // Call fetchContacts to load contacts
     }, []);  // Empty dependency array ensures this runs only once
 
-    useEffect(() => {
-        console.log("Store contacts:", store.contacts); // Log the store contacts
-    }, [store.contacts]);
-
     const handleEdit = (contact) => {
-        navigate(`/editcontact/${contact.id}`);
+        setEditContactId(contact.id);
+        setUpdatedContact(contact);
+    };
+
+    const handleInputChange = (e, id) => {
+        const { name, value } = e.target;
+        if (id === editContactId) {
+            setUpdatedContact({
+                ...updatedContact,
+                [name]: value
+            });
+        }
+    };
+
+    const handleSave = (id) => {
+        actions.updateContact(id, updatedContact);
+        setEditContactId(null); // Exit edit mode
+    };
+
+    const handleCancel = () => {
+        setEditContactId(null); // Exit edit mode
     };
 
     const handleDelete = (id) => {
@@ -43,8 +60,13 @@ const Home = () => {
                                 <ContactCard 
                                     key={contact.id} 
                                     contact={contact} 
+                                    isEditing={editContactId === contact.id}
+                                    updatedContact={editContactId === contact.id ? updatedContact : contact}
+                                    onInputChange={handleInputChange}
                                     cardDelete={handleDelete} 
                                     cardEdit={handleEdit} 
+                                    cardSave={handleSave} 
+                                    cardCancel={handleCancel} 
                                 />
                             ))}
                         </ul>
