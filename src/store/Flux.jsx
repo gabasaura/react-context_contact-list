@@ -1,33 +1,57 @@
-const getState = ({ getState, setState }) => {
+const getState = ({ getStore, getActions, setStore }) => {
     return {
-        state: {
-            user: {
-                name: 'John Doe',
-                loggedIn: false
-            },
-            tasks: []
+        store: {
+            contacts: [],
         },
         actions: {
-            login: (name) => {
-                setState({ user: { name, loggedIn: true } });
+            fetchContacts: async () => {
+                try {
+                    const response = await fetch('https://playground.4geeks.com/contact/agendas/gaba');
+                    const data = await response.json();
+                    console.log("Fetched contacts:", data); // Log fetched data
+                    setStore({ contacts: Array.isArray(data.contacts) ? data.contacts : [] });
+                    console.log("Updated store:", getStore()); // Log updated store
+                } catch (error) {
+                    console.error("Error fetching contacts:", error);
+                }
             },
-            logout: () => {
-                setState({ user: { name: '', loggedIn: false } });
-            },
-            addTask: (task) => {
-                const state = getState();
-                setState({ tasks: [...state.tasks, task] });
-            },
-            loadSomeData: () => {
-                // Simulate a data load
-                setTimeout(() => {
-                    setState({
-                        tasks: [
-                            { id: 1, label: 'Task 1', done: false },
-                            { id: 2, label: 'Task 2', done: false }
-                        ]
+            createContact: async (contact) => {
+                try {
+                    await fetch('https://playground.4geeks.com/contact/agendas/gaba', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(contact)
                     });
-                }, 1000);
+                    getActions().fetchContacts();  // Fetch contacts after creating a new one
+                } catch (error) {
+                    console.error("Error creating contact:", error);
+                }
+            },
+            updateContact: async (id, updatedContact) => {
+                try {
+                    await fetch(`https://playground.4geeks.com/contact/agendas/gaba/contacts/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedContact)
+                    });
+                    getActions().fetchContacts();  // Fetch contacts after updating one
+                } catch (error) {
+                    console.error("Error updating contact:", error);
+                }
+            },
+            deleteContact: async (id) => {
+                try {
+                    await fetch(`https://playground.4geeks.com/contact/agendas/gaba/contacts/${id}`, {
+                        method: 'DELETE'
+                    });
+                    getActions().fetchContacts();  // Fetch contacts after deleting one
+                } catch (error) {
+                    console.error("Error deleting contact:", error);
+                }
             }
         }
     };
