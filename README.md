@@ -1,2 +1,3 @@
 # CONTACT LIST
-Hecho para 4Geek Academy, usando RESTful API.
+Hecho para 4Geek Academy.
+Usando RESTful API.
